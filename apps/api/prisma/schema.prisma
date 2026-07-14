@@ -1,0 +1,183 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum ShopStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum PayoutStatus {
+  UNPAID
+  PAID
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  password           String
+  name               String
+  role               Role                @default(CUSTOMER)
+  walletBalance      Float               @default(0.0)
+  walletTransactions WalletTransaction[]
+  assignedDeliveries Order[]             @relation("DriverDeliveries")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  shops              Shop[]
+  orders             Order[]
+}
+
+model Shop {
+  id          String             @id @default(uuid())
+  name        String
+  slug        String             @unique
+  description String?
+  logo        String?
+  coverImage  String?
+  status      ShopStatus         @default(PENDING)
+  ownerId     String
+  owner       User               @relation(fields: [ownerId], references: [id])
+  products    Product[]
+  orderItems  OrderItem[]
+  commissions VendorCommission[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model Product {
+  id            String           @id @default(uuid())
+  name          String
+  slug          String           @unique
+  description   String?
+  price         Float
+  compareAtPrice Float?
+  isPublished   Boolean          @default(false)
+  status        ProductStatus    @default(DRAFT)
+  shopId        String
+  shop          Shop             @relation(fields: [shopId], references: [id])
+  categoryId    String?
+  category      Category?        @relation(fields: [categoryId], references: [id])
+  viewCount     Int              @default(0)
+  rating        Float            @default(0.0)
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model ProductVariant {
+  id         String      @id @default(uuid())
+  name       String
+  sku        String      @unique
+  price      Float
+  stock      Int         @default(0)
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  customerId      String
+  customer        User          @relation(fields: [customerId], references: [id])
+  totalAmount     Float
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String
+  items           OrderItem[]
+  driverId        String?
+  driver          User?         @relation("DriverDeliveries", fields: [driverId], references: [id])
+  deliveryOTP     String?
+  proofOfDelivery String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id               String            @id @default(uuid())
+  orderId          String
+  order            Order             @relation(fields: [orderId], references: [id])
+  productId        String
+  product          Product           @relation(fields: [productId], references: [id])
+  variantId        String
+  variant          ProductVariant    @relation(fields: [variantId], references: [id])
+  shopId           String
+  shop             Shop              @relation(fields: [shopId], references: [id])
+  quantity         Int
+  price            Float
+  commissionRate   Float
+  commissionAmount Float
+  netSellerEarning Float
+  commission       VendorCommission?
+}
+
+model VendorCommission {
+  id               String       @id @default(uuid())
+  orderItemId      String       @unique
+  orderItem        OrderItem    @relation(fields: [orderItemId], references: [id])
+  shopId           String
+  shop             Shop         @relation(fields: [shopId], references: [id])
+  totalAmount      Float
+  commissionRate   Float
+  commissionAmount Float
+  netSellerEarning Float
+  status           PayoutStatus @default(UNPAID)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String
+  slug      String     @unique
+  parentId  String?
+  parent    Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryToCategory")
+  products  Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model WalletTransaction {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Float
+  type      String   // DEPOSIT, WITHDRAWAL, PURCHASE, EARNING
+  status    String   // PENDING, COMPLETED, FAILED
+  createdAt DateTime @default(now())
+}
