@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  --primary: 142.1 76.2% 36.3%;
+  --primary-foreground: 355.7 100% 97.3%;
+  --card: 240 10% 5%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 16%;
+  --input: 240 3.7% 16%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Outfit', 'Inter', sans-serif;
+  margin: 0;
+}

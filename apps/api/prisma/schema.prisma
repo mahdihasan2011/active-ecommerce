@@ -53,6 +53,9 @@ model User {
   walletBalance      Float               @default(0.0)
   walletTransactions WalletTransaction[]
   assignedDeliveries Order[]             @relation("DriverDeliveries")
+  staffLogs          StaffLog[]          @relation("StaffLogs")
+  securityEvents     SecurityEvent[]     @relation("SecurityEvents")
+  permissions        String[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   shops              Shop[]
@@ -179,5 +182,25 @@ model WalletTransaction {
   amount    Float
   type      String   // DEPOSIT, WITHDRAWAL, PURCHASE, EARNING
   status    String   // PENDING, COMPLETED, FAILED
+  createdAt DateTime @default(now())
+}
+
+model StaffLog {
+  id        String   @id @default(uuid())
+  staffId   String
+  staff     User     @relation("StaffLogs", fields: [staffId], references: [id])
+  action    String
+  details   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model SecurityEvent {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation("SecurityEvents", fields: [userId], references: [id])
+  eventType String   // e.g. LOGIN_FAILURE, PASSWORD_CHANGE, 2FA_TOGGLE
+  details   String
+  ipAddress String?
   createdAt DateTime @default(now())
 }

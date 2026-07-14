@@ -22,6 +22,7 @@ export interface User {
   name: string;
   role: UserRole;
   walletBalance: number;
+  permissions: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -159,4 +160,22 @@ export interface CheckoutDto {
   shopId: string;
   items: CheckoutItem[];
   paymentMethod: 'WALLET' | 'COD';
+}
+
+export interface StaffLog {
+  id: string;
+  staffId: string;
+  action: string;
+  details: string;
+  ipAddress?: string | null;
+  createdAt: Date;
+}
+
+export interface SecurityEvent {
+  id: string;
+  userId?: string | null;
+  eventType: string;
+  details: string;
+  ipAddress?: string | null;
+  createdAt: Date;
 }
