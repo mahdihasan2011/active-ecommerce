@@ -36,6 +36,16 @@ export class SearchService implements OnModuleInit {
                 categoryName: { type: 'keyword' },
                 shopId: { type: 'keyword' },
                 shopName: { type: 'keyword' },
+                brandId: { type: 'keyword' },
+                brandName: { type: 'keyword' },
+                badges: { type: 'keyword' },
+                attributes: {
+                  type: 'nested',
+                  properties: {
+                    name: { type: 'keyword' },
+                    value: { type: 'keyword' },
+                  },
+                },
                 rating: { type: 'float' },
                 createdAt: { type: 'date' },
                 variants: {
@@ -70,6 +80,13 @@ export class SearchService implements OnModuleInit {
       categoryName: product.category?.name || '',
       shopId: product.shopId,
       shopName: product.shop?.name || '',
+      brandId: product.brandId || '',
+      brandName: product.brand?.name || '',
+      badges: product.badges?.map((b: any) => b.name) || [],
+      attributes: product.attributes?.map((pa: any) => ({
+        name: pa.attributeValue?.attribute?.name || '',
+        value: pa.attributeValue?.value || '',
+      })) || [],
       rating: product.rating || 0,
       createdAt: product.createdAt,
       variants: product.variants?.map((v: any) => ({
@@ -102,6 +119,9 @@ export class SearchService implements OnModuleInit {
   async search(
     query: string,
     categoryId?: string,
+    brandId?: string,
+    badges?: string[],
+    attributes?: { name: string; value: string }[],
     minPrice?: number,
     maxPrice?: number,
     sortBy?: string,
@@ -123,6 +143,32 @@ export class SearchService implements OnModuleInit {
 
     if (categoryId) {
       filter.push({ term: { categoryId } });
+    }
+
+    if (brandId) {
+      filter.push({ term: { brandId } });
+    }
+
+    if (badges && badges.length > 0) {
+      filter.push({ terms: { badges } });
+    }
+
+    if (attributes && attributes.length > 0) {
+      for (const attr of attributes) {
+        filter.push({
+          nested: {
+            path: 'attributes',
+            query: {
+              bool: {
+                must: [
+                  { term: { 'attributes.name': attr.name } },
+                  { term: { 'attributes.value': attr.value } }
+                ]
+              }
+            }
+          }
+        });
+      }
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {

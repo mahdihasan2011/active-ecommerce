@@ -29,6 +29,17 @@ export class SearchIndexerProcessor extends WorkerHost {
             category: true,
             shop: true,
             variants: true,
+            brand: true,
+            badges: true,
+            attributes: {
+              include: {
+                attributeValue: {
+                  include: {
+                    attribute: true,
+                  },
+                },
+              },
+            },
           },
         });
 

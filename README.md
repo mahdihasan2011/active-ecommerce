@@ -50,95 +50,69 @@ active-ecommerce/
    pnpm install
    ```
 
-## Backend Setup
+## Backend & Database Setup
 
-1. **Navigate to API directory**
+Make sure your PostgreSQL database is running.
+
+1. **Configure environment variables**
+   Navigate to the API directory and copy the `.env.example`:
    ```bash
    cd apps/api
+   cp .env.example .env
    ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Configure environment variables**
-   Copy `.env.example` to `.env` and fill in your database credentials:
-   ```bash
-   DATABASE_URL="postgresql://username:password@localhost:5432/database_name"
+   Fill in your database credentials in `apps/api/.env`:
+   ```env
+   DATABASE_URL="postgresql://username:password@localhost:5432/database_name?schema=public"
    PORT=3001
    ```
 
-4. **Run database migrations**
+2. **Run database migrations (From the root directory)**
    ```bash
-   npx prisma migrate dev --name init
+   cd ../../
+   pnpm run migrate
    ```
 
-5. **Generate Prisma client**
+3. **Generate Prisma client**
    ```bash
-   npx prisma generate
+   pnpm run prisma:generate
    ```
-
-6. **Seed the database**
-   ```bash
-   npx prisma db seed
-   ```
-
-7. **Start the server**
-   ```bash
-   pnpm run start:dev
-   ```
-   The API will be available at `http://localhost:3001`
 
 ## Frontend Setup
 
-1. **Navigate to Web directory**
+1. **Configure environment variables**
+   Navigate to the Web directory:
    ```bash
-   cd ../web
+   cd apps/web
+   cp .env.example .env
    ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Configure environment variables**
-   Copy `.env.example` to `.env` and fill in your API URL:
-   ```bash
+   Fill in your API URL in `apps/web/.env`:
+   ```env
    NEXT_PUBLIC_API_URL="http://localhost:3001/api"
    ```
 
-4. **Start the development server**
-   ```bash
-   pnpm run dev
-   ```
-   The frontend will be available at `http://localhost:3000`
-
 ## Development
 
-### Running Both Simultaneously
+### Running the Stack
 
-Use the `concurrently` package to run both the frontend and backend:
+Because this project is a monorepo powered by Turborepo, you can start both the frontend and backend simultaneously directly from the root directory:
 
 ```bash
-pnpm run dev:all
+pnpm run dev
 ```
 
-### Available Scripts
+The frontend will be available at `http://localhost:3000`
+The API will be available at `http://localhost:3001`
 
-**API:**
-- `pnpm run dev`: Start development server
-- `pnpm run build`: Build the project
-- `pnpm run start`: Run the built project
-- `pnpm run migrate`: Run migrations
-- `pnpm run prisma:generate`: Generate Prisma client
-- `pnpm run prisma:studio`: Open Prisma Studio
+### Root Available Scripts
 
-**Web:**
-- `pnpm run dev`: Start development server
-- `pnpm run build`: Build the project
-- `pnpm run start`: Run the built project
-- `pnpm run lint`: Run ESLint
+Run these from the root directory:
+
+- `pnpm run dev`: Start both frontend and backend development servers simultaneously via Turbo
+- `pnpm run build`: Build the entire workspace (all apps and packages)
+- `pnpm run lint`: Run ESLint across the workspace
+- `pnpm run migrate`: Run Prisma database migrations for the API backend
+- `pnpm run prisma:generate`: Generate the Prisma client for the API backend
+- `pnpm run prisma:studio`: Open Prisma Studio to manage the database
 
 ## Branch Management
 
