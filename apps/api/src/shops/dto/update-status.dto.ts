@@ -1,7 +1,7 @@
-import { IsEnum } from 'class-validator';
-import { ShopStatus } from '@prisma/client';
+import { IsIn } from 'class-validator';
+import { ShopStatus } from '@repo/types';
 
 export class UpdateShopStatusDto {
-  @IsEnum(ShopStatus, { message: 'Status must be PENDING, APPROVED, or REJECTED' })
+  @IsIn(['PENDING', 'APPROVED', 'REJECTED'], { message: 'Status must be PENDING, APPROVED, or REJECTED' })
   status!: ShopStatus;
 }

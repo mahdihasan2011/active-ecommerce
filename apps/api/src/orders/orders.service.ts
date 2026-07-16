@@ -144,7 +144,7 @@ export class OrdersService {
         });
       }
 
-      return order;
+      return order as unknown as Order;
     });
   }
 

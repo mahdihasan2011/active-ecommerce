@@ -1,24 +1,18 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Job } from 'bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SearchService } from '../search/search.service';
 
-@Processor('search-indexing')
 @Injectable()
-export class SearchIndexerProcessor extends WorkerHost {
+export class SearchIndexerProcessor {
   private readonly logger = new Logger(SearchIndexerProcessor.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly searchService: SearchService,
-  ) {
-    super();
-  }
+  ) {}
 
-  async process(job: Job<any>): Promise<void> {
-    const { name, data } = job;
-    this.logger.log(`Processing job ${job.id} of type ${name}`);
+  async process(name: string, data: any): Promise<void> {
+    this.logger.log(`Processing job of type ${name}`);
 
     try {
       if (name === 'index-product') {
@@ -57,7 +51,7 @@ export class SearchIndexerProcessor extends WorkerHost {
       }
     } catch (error) {
       this.logger.error(`Error processing search indexing job: ${error}`);
-      throw error; // Let BullMQ handle retries
+      throw error;
     }
   }
 }

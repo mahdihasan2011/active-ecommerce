@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -7,113 +7,63 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  ADMIN
-  VENDOR
-  CUSTOMER
-}
-
-enum ShopStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum ProductStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum OrderStatus {
-  PENDING
-  PAID
-  SHIPPED
-  DELIVERED
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  PAID
-  REFUNDED
-}
-
-enum PayoutStatus {
-  UNPAID
-  PAID
-  REJECTED
-}
-
-enum DocumentStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum AuctionStatus {
-  ACTIVE
-  ENDED
-  CANCELLED
-}
-
 model User {
-  id                 String              @id @default(uuid())
-  email              String              @unique
-  password           String
-  name               String
-  phoneNumber        String?
-  is2FAEnabled       Boolean             @default(false)
-  twoFactorSecret    String?
-  otpCode            String?
-  otpExpiry          DateTime?
-  role               Role                @default(CUSTOMER)
-  walletBalance      Float               @default(0.0)
-  walletTransactions WalletTransaction[]
-  assignedDeliveries Order[]             @relation("DriverDeliveries")
-  staffLogs          StaffLog[]          @relation("StaffLogs")
-  securityEvents     SecurityEvent[]     @relation("SecurityEvents")
-  permissions        String[]
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  shops              Shop[]
-  orders             Order[]
-  addresses          UserAddress[]
-  deviceSessions     DeviceSession[]
-  wishlist           Wishlist?
-  reviews            Review[]
-  bids               Bid[]
-  sentMessages       Message[]           @relation("SenderMessages")
-  receivedMessages   Message[]           @relation("ReceiverMessages")
-  conversationsAsCustomer Conversation[] @relation("CustomerConversations")
-  withdrawalRequests WithdrawalRequest[]
-  createdLookupTypes LookupType[]        @relation("LookupTypeCreatedBy")
-  updatedLookupTypes LookupType[]        @relation("LookupTypeUpdatedBy")
-  createdLookups     Lookup[]            @relation("LookupCreatedBy")
-  updatedLookups     Lookup[]            @relation("LookupUpdatedBy")
+  id                      String              @id @default(uuid())
+  email                   String              @unique
+  password                String
+  name                    String
+  phoneNumber             String?
+  is2FAEnabled            Boolean             @default(false)
+  twoFactorSecret         String?
+  otpCode                 String?
+  otpExpiry               DateTime?
+  role                    String              @default("CUSTOMER")
+  walletBalance           Float               @default(0.0)
+  walletTransactions      WalletTransaction[]
+  assignedDeliveries      Order[]             @relation("DriverDeliveries")
+  staffLogs               StaffLog[]          @relation("StaffLogs")
+  securityEvents          SecurityEvent[]     @relation("SecurityEvents")
+  permissions             String              @default("[]")
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  shops                   Shop[]
+  orders                  Order[]
+  addresses               UserAddress[]
+  deviceSessions          DeviceSession[]
+  wishlist                Wishlist?
+  reviews                 Review[]
+  bids                    Bid[]
+  sentMessages            Message[]           @relation("SenderMessages")
+  receivedMessages        Message[]           @relation("ReceiverMessages")
+  conversationsAsCustomer Conversation[]      @relation("CustomerConversations")
+  withdrawalRequests      WithdrawalRequest[]
+  createdLookupTypes      LookupType[]        @relation("LookupTypeCreatedBy")
+  updatedLookupTypes      LookupType[]        @relation("LookupTypeUpdatedBy")
+  createdLookups          Lookup[]            @relation("LookupCreatedBy")
+  updatedLookups          Lookup[]            @relation("LookupUpdatedBy")
 }
 
 model UserAddress {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String   // e.g. Home, Office
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String // e.g. Home, Office
   addressLine1 String
   addressLine2 String?
-  city      String
-  state     String
-  country   String
-  zipCode   String
-  isDefault Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  city         String
+  state        String
+  country      String
+  zipCode      String
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model DeviceSession {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  device    String   // e.g. iPhone 12, Chrome Windows
+  device    String // e.g. iPhone 12, Chrome Windows
   ipAddress String
   lastLogin DateTime @default(now())
   isActive  Boolean  @default(true)
@@ -121,48 +71,48 @@ model DeviceSession {
 }
 
 model Shop {
-  id          String             @id @default(uuid())
-  name        String
-  slug        String             @unique
-  description String?
-  logo        String?
-  coverImage  String?
-  status      ShopStatus         @default(PENDING)
-  vacationMode Boolean           @default(false)
-  ownerId     String
-  owner       User               @relation(fields: [ownerId], references: [id])
-  products    Product[]
-  orderItems  OrderItem[]
-  commissions VendorCommission[]
-  kycDocuments KYCDocument[]
+  id                 String              @id @default(uuid())
+  name               String
+  slug               String              @unique
+  description        String?
+  logo               String?
+  coverImage         String?
+  status             String              @default("PENDING")
+  vacationMode       Boolean             @default(false)
+  ownerId            String
+  owner              User                @relation(fields: [ownerId], references: [id])
+  products           Product[]
+  orderItems         OrderItem[]
+  commissions        VendorCommission[]
+  kycDocuments       KYCDocument[]
   withdrawalRequests WithdrawalRequest[]
-  policies    ShopPolicy?
-  conversations Conversation[]   @relation("VendorConversations")
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  policies           ShopPolicy?
+  conversations      Conversation[]      @relation("VendorConversations")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model KYCDocument {
-  id        String         @id @default(uuid())
-  shopId    String
-  shop      Shop           @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  documentType String      // e.g. PASSPORT, TAX_ID
-  fileUrl   String
-  status    DocumentStatus @default(PENDING)
-  notes     String?
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id           String   @id @default(uuid())
+  shopId       String
+  shop         Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  documentType String // e.g. PASSPORT, TAX_ID
+  fileUrl      String
+  status       String   @default("PENDING")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model ShopPolicy {
-  id               String   @id @default(uuid())
-  shopId           String   @unique
-  shop             Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  shippingPolicy   String?
-  returnPolicy     String?
-  deliveryRanges   String?  // Could be JSON or structured string depending on complex logic
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             String   @id @default(uuid())
+  shopId         String   @unique
+  shop           Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  shippingPolicy String?
+  returnPolicy   String?
+  deliveryRanges String? // Could be JSON or structured string depending on complex logic
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Brand {
@@ -176,23 +126,23 @@ model Brand {
 }
 
 model Badge {
-  id        String    @id @default(uuid())
-  name      String    @unique // e.g. "AI Pick", "Trending"
-  color     String?
-  products  Product[]
+  id       String    @id @default(uuid())
+  name     String    @unique // e.g. "AI Pick", "Trending"
+  color    String?
+  products Product[]
 }
 
 model Attribute {
-  id        String           @id @default(uuid())
-  name      String           @unique // e.g. Color, Size
-  values    AttributeValue[]
+  id     String           @id @default(uuid())
+  name   String           @unique // e.g. Color, Size
+  values AttributeValue[]
 }
 
 model AttributeValue {
   id          String             @id @default(uuid())
   attributeId String
   attribute   Attribute          @relation(fields: [attributeId], references: [id], onDelete: Cascade)
-  value       String             // e.g. Red, XL
+  value       String // e.g. Red, XL
   products    ProductAttribute[]
 }
 
@@ -207,32 +157,32 @@ model ProductAttribute {
 }
 
 model Product {
-  id            String           @id @default(uuid())
-  name          String
-  slug          String           @unique
-  description   String?
-  price         Float
+  id             String             @id @default(uuid())
+  name           String
+  slug           String             @unique
+  description    String?
+  price          Float
   compareAtPrice Float?
-  isPublished   Boolean          @default(false)
-  status        ProductStatus    @default(DRAFT)
-  shopId        String
-  shop          Shop             @relation(fields: [shopId], references: [id])
-  categoryId    String?
-  category      Category?        @relation(fields: [categoryId], references: [id])
-  brandId       String?
-  brand         Brand?           @relation(fields: [brandId], references: [id])
-  viewCount     Int              @default(0)
-  rating        Float            @default(0.0)
-  unitMeasure   String?          // e.g. grams, kg, pieces
-  variants      ProductVariant[]
-  orderItems    OrderItem[]
-  badges        Badge[]
-  attributes    ProductAttribute[]
-  reviews       Review[]
-  wishlistItems WishlistItem[]
-  auctions      Auction[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  isPublished    Boolean            @default(false)
+  status         String             @default("DRAFT")
+  shopId         String
+  shop           Shop               @relation(fields: [shopId], references: [id])
+  categoryId     String?
+  category       Category?          @relation(fields: [categoryId], references: [id])
+  brandId        String?
+  brand          Brand?             @relation(fields: [brandId], references: [id])
+  viewCount      Int                @default(0)
+  rating         Float              @default(0.0)
+  unitMeasure    String? // e.g. grams, kg, pieces
+  variants       ProductVariant[]
+  orderItems     OrderItem[]
+  badges         Badge[]
+  attributes     ProductAttribute[]
+  reviews        Review[]
+  wishlistItems  WishlistItem[]
+  auctions       Auction[]
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }
 
 model ProductVariant {
@@ -249,17 +199,17 @@ model ProductVariant {
 }
 
 model Review {
-  id        String   @id @default(uuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rating    Int
-  comment   String?
-  mediaUrls String[]
-  isVerified Boolean @default(false) // Verified purchase
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating     Int
+  comment    String?
+  mediaUrls  String
+  isVerified Boolean  @default(false) // Verified purchase
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Wishlist {
@@ -272,30 +222,30 @@ model Wishlist {
 }
 
 model WishlistItem {
-  id         String   @id @default(uuid())
-  wishlistId String
-  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  alertOnPriceDrop Boolean @default(false)
-  alertOnRestock   Boolean @default(false)
-  createdAt  DateTime @default(now())
+  id               String   @id @default(uuid())
+  wishlistId       String
+  wishlist         Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  alertOnPriceDrop Boolean  @default(false)
+  alertOnRestock   Boolean  @default(false)
+  createdAt        DateTime @default(now())
 
   @@unique([wishlistId, productId])
 }
 
 model Auction {
-  id             String        @id @default(uuid())
-  productId      String
-  product        Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  startingPrice  Float
+  id              String   @id @default(uuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  startingPrice   Float
   minBidIncrement Float
-  status         AuctionStatus @default(ACTIVE)
-  startTime      DateTime
-  endTime        DateTime
-  bids           Bid[]
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  status          String   @default("ACTIVE")
+  startTime       DateTime
+  endTime         DateTime
+  bids            Bid[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Bid {
@@ -309,14 +259,14 @@ model Bid {
 }
 
 model Conversation {
-  id          String    @id @default(uuid())
-  customerId  String
-  customer    User      @relation("CustomerConversations", fields: [customerId], references: [id])
-  shopId      String
-  shop        Shop      @relation("VendorConversations", fields: [shopId], references: [id])
-  messages    Message[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String    @id @default(uuid())
+  customerId String
+  customer   User      @relation("CustomerConversations", fields: [customerId], references: [id])
+  shopId     String
+  shop       Shop      @relation("VendorConversations", fields: [shopId], references: [id])
+  messages   Message[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Message {
@@ -333,37 +283,37 @@ model Message {
 }
 
 model Coupon {
-  id            String   @id @default(uuid())
-  code          String   @unique
-  discountType  String   // PERCENTAGE, FIXED
+  id            String    @id @default(uuid())
+  code          String    @unique
+  discountType  String // PERCENTAGE, FIXED
   discountValue Float
   minPurchase   Float?
   usageLimit    Int?
-  usageCount    Int      @default(0)
+  usageCount    Int       @default(0)
   expiryDate    DateTime?
   orders        Order[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Order {
-  id              String        @id @default(uuid())
+  id              String      @id @default(uuid())
   customerId      String
-  customer        User          @relation(fields: [customerId], references: [id])
+  customer        User        @relation(fields: [customerId], references: [id])
   totalAmount     Float
-  discountAmount  Float         @default(0.0)
+  discountAmount  Float       @default(0.0)
   couponId        String?
-  coupon          Coupon?       @relation(fields: [couponId], references: [id])
-  status          OrderStatus   @default(PENDING)
-  paymentStatus   PaymentStatus @default(PENDING)
+  coupon          Coupon?     @relation(fields: [couponId], references: [id])
+  status          String      @default("PENDING")
+  paymentStatus   String      @default("PENDING")
   paymentMethod   String
   items           OrderItem[]
   driverId        String?
-  driver          User?         @relation("DriverDeliveries", fields: [driverId], references: [id])
+  driver          User?       @relation("DriverDeliveries", fields: [driverId], references: [id])
   deliveryOTP     String?
   proofOfDelivery String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -385,33 +335,33 @@ model OrderItem {
 }
 
 model VendorCommission {
-  id               String       @id @default(uuid())
-  orderItemId      String       @unique
-  orderItem        OrderItem    @relation(fields: [orderItemId], references: [id])
+  id               String    @id @default(uuid())
+  orderItemId      String    @unique
+  orderItem        OrderItem @relation(fields: [orderItemId], references: [id])
   shopId           String
-  shop             Shop         @relation(fields: [shopId], references: [id])
+  shop             Shop      @relation(fields: [shopId], references: [id])
   totalAmount      Float
   commissionRate   Float
   commissionAmount Float
   netSellerEarning Float
-  status           PayoutStatus @default(UNPAID)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  status           String    @default("UNPAID")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model WithdrawalRequest {
-  id          String       @id @default(uuid())
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-  shopId      String
-  shop        Shop         @relation(fields: [shopId], references: [id])
-  amount      Float
-  method      String       // BANK_TRANSFER, MOBILE_MONEY
-  details     String       // Account details
-  status      PayoutStatus @default(UNPAID) // UNPAID -> PAID/REJECTED
-  adminNotes  String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  shopId     String
+  shop       Shop     @relation(fields: [shopId], references: [id])
+  amount     Float
+  method     String // BANK_TRANSFER, MOBILE_MONEY
+  details    String // Account details
+  status     String   @default("UNPAID") // UNPAID -> PAID/REJECTED
+  adminNotes String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Category {
@@ -431,8 +381,8 @@ model WalletTransaction {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   amount    Float
-  type      String   // DEPOSIT, WITHDRAWAL, PURCHASE, EARNING
-  status    String   // PENDING, COMPLETED, FAILED
+  type      String // DEPOSIT, WITHDRAWAL, PURCHASE, EARNING
+  status    String // PENDING, COMPLETED, FAILED
   createdAt DateTime @default(now())
 }
 
@@ -450,7 +400,7 @@ model SecurityEvent {
   id        String   @id @default(uuid())
   userId    String?
   user      User?    @relation("SecurityEvents", fields: [userId], references: [id])
-  eventType String   // e.g. LOGIN_FAILURE, PASSWORD_CHANGE, 2FA_TOGGLE
+  eventType String // e.g. LOGIN_FAILURE, PASSWORD_CHANGE, 2FA_TOGGLE
   details   String
   ipAddress String?
   createdAt DateTime @default(now())
@@ -472,28 +422,28 @@ model LookupType {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  lookups     Lookup[]
+  lookups Lookup[]
 }
 
 model Lookup {
-  id           String       @id @default(uuid())
+  id           String     @id @default(uuid())
   lookupTypeId String
-  lookupType   LookupType   @relation(fields: [lookupTypeId], references: [id], onDelete: Cascade)
+  lookupType   LookupType @relation(fields: [lookupTypeId], references: [id], onDelete: Cascade)
   code         String
   title        String
-  status       Boolean      @default(true)
-  displayOrder Int          @default(0)
+  status       Boolean    @default(true)
+  displayOrder Int        @default(0)
   startDate    DateTime?
   endDate      DateTime?
   createdById  String?
-  createdBy    User?        @relation("LookupCreatedBy", fields: [createdById], references: [id])
+  createdBy    User?      @relation("LookupCreatedBy", fields: [createdById], references: [id])
   updatedById  String?
-  updatedBy    User?        @relation("LookupUpdatedBy", fields: [updatedById], references: [id])
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  updatedBy    User?      @relation("LookupUpdatedBy", fields: [updatedById], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
   deletedAt    DateTime?
 
-  values       LookupValue[]
+  values LookupValue[]
 
   @@unique([lookupTypeId, code])
 }
@@ -514,11 +464,11 @@ model LookupValue {
 model LookupTextValue {
   lookupValueId String      @id
   lookupValue   LookupValue @relation(fields: [lookupValueId], references: [id], onDelete: Cascade)
-  value         String?     @db.Text
+  value         String?
 }
 
 model LookupCharValue {
   lookupValueId String      @id
   lookupValue   LookupValue @relation(fields: [lookupValueId], references: [id], onDelete: Cascade)
-  value         String?     @db.VarChar(255)
+  value         String?
 }

@@ -1,134 +1,124 @@
 import React from 'react';
-import Navbar from '../components/navbar';
-import { ShoppingBag, Search, Shield, Zap, Database, Server, Cpu, ArrowRight } from 'lucide-react';
+import Header from '../components/home/Header';
+import HeroSection from '../components/home/HeroSection';
+import CategoryGrid from '../components/home/CategoryGrid';
+import FlashSale from '../components/home/FlashSale';
+import AuctionGrid from '../components/home/AuctionGrid';
+import ClassifiedGrid from '../components/home/ClassifiedGrid';
+import TopSellers from '../components/home/TopSellers';
+import CategorizedShelf from '../components/home/CategorizedShelf';
+import Footer from '../components/home/Footer';
+import ProductCard from '../components/home/ProductCard';
 
 export default function Home() {
+  // Mock data for computer & accessories shelf
+  const computerProducts = [
+    { name: "Lenovo Legion Pro 5 Gaming Laptop", price: 1299.00, originalPrice: 1599.00, discount: 18, imageColor: "bg-slate-100", rating: 5, reviews: 102 },
+    { name: "Logitech MX Master 3S Wireless Mouse", price: 99.00, imageColor: "bg-zinc-100", rating: 5, reviews: 245 },
+    { name: "Razer BlackWidow V4 Mechanical Keyboard", price: 169.00, originalPrice: 199.00, discount: 15, imageColor: "bg-gray-100", rating: 4, reviews: 67 },
+    { name: "ASUS ROG Swift 32\" 4K OLED Gaming Monitor", price: 899.00, imageColor: "bg-slate-200", rating: 5, reviews: 19 },
+    { name: "Samsung 990 PRO NVMe M.2 SSD 2TB", price: 149.00, originalPrice: 179.00, discount: 16, imageColor: "bg-neutral-100", rating: 5, reviews: 312 },
+    { name: "TP-Link Deco BE85 Wi-Fi 7 Mesh Router", price: 449.00, imageColor: "bg-stone-100", rating: 4, reviews: 8 },
+  ];
+
+  // Mock data for women's fashion shelf
+  const fashionProducts = [
+    { name: "Classic Trench Coat with Belt detail", price: 120.00, originalPrice: 180.00, discount: 33, imageColor: "bg-amber-50/40", rating: 4, reviews: 54 },
+    { name: "Leather Handbag with Gold-tone hardware", price: 85.00, imageColor: "bg-rose-50/40", rating: 5, reviews: 92 },
+    { name: "Suede Pointed-Toe High Heels", price: 65.00, originalPrice: 85.00, discount: 23, imageColor: "bg-red-50/40", rating: 4, reviews: 28 },
+    { name: "Oversized Polarized Fashion Sunglasses", price: 25.00, imageColor: "bg-yellow-50/40", rating: 4, reviews: 110 },
+    { name: "Bohemian Floral Print Maxi Dress", price: 45.00, originalPrice: 60.00, discount: 25, imageColor: "bg-emerald-50/40", rating: 5, reviews: 73 },
+    { name: "Rose Gold Quartz Analog Wrist Watch", price: 110.00, imageColor: "bg-orange-50/40", rating: 4, reviews: 41 },
+  ];
+
   return (
-    <div className="relative min-h-screen bg-slate-950 text-white overflow-hidden font-sans">
-      {/* Background glow effects */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#f8f9fa] font-sans text-gray-900">
+      <Header />
+      
+      <main className="space-y-6">
+        {/* Banner + Sidebar Navigation (Gray background header band) */}
+        <div className="bg-white border-b border-gray-100">
+          <HeroSection />
+        </div>
 
-      {/* Header / Navbar */}
-      <Navbar />
+        {/* Categories Circle Grid */}
+        <div className="bg-white border-y border-gray-100">
+          <CategoryGrid />
+        </div>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-6 py-20 relative">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-xs font-semibold text-purple-300 tracking-wider uppercase">
-            <Zap className="h-3 w-3 animate-pulse" />
-            <span>Next-Gen Enterprise Architecture</span>
+        {/* Flash Deals with Timer & sold count */}
+        <div className="bg-white border-y border-gray-100">
+          <FlashSale />
+        </div>
+
+        {/* Banner Ad Divider (2 Column Promotion Banners) */}
+        <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-44 bg-gradient-to-r from-rose-500 to-[#e62e04] rounded-lg p-8 flex flex-col justify-center text-white cursor-pointer shadow-sm relative overflow-hidden group">
+            <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+            <span className="text-xs font-bold uppercase tracking-widest text-orange-200 mb-1">Super Deal</span>
+            <h3 className="text-2xl font-black mb-3">Kitchen Appliances</h3>
+            <span className="text-xs font-bold underline">Get Coupon Code</span>
           </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-none bg-gradient-to-b from-white to-slate-400 bg-clip-text text-transparent">
-            Scale Multi-Vendor <br />
-            Commerce Effortlessly
-          </h1>
-
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
-            A premium, high-performance monorepo platform built on Next.js 15, NestJS, and Prisma. Powering ultra-fast queries with OpenSearch, microtask execution via BullMQ, and distributed storage.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl font-semibold shadow-xl shadow-purple-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-[1.02]">
-              <span>Explore Marketplace</span>
-              <ArrowRight className="h-5 w-5" />
-            </button>
-            <button className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl font-semibold transition-all">
-              View Developer Guide
-            </button>
+          <div className="h-44 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg p-8 flex flex-col justify-center text-white cursor-pointer shadow-sm relative overflow-hidden group">
+            <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-100 mb-1">New Trend</span>
+            <h3 className="text-2xl font-black mb-3">Sports & Fitness</h3>
+            <span className="text-xs font-bold underline">Shop Collection</span>
           </div>
         </div>
 
-        {/* Tech Stack Cards */}
-        <section className="py-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Card 1 */}
-          <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm hover:border-purple-500/50 transition-all group">
-            <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
-              <Cpu className="h-6 w-6" />
-            </div>
-            <h3 className="text-lg font-bold mt-4 mb-2 text-white">Next.js 15 SSR Catalog</h3>
-            <p className="text-sm text-slate-400 font-light">
-              Server-side rendered dynamic listings for SEO optimization and instant interaction.
-            </p>
-          </div>
+        {/* Shelf 1: Computer & Accessories */}
+        <div className="bg-white border-y border-gray-100">
+          <CategorizedShelf 
+            title="Computer & Accessories"
+            subcategories={["Laptops", "Accessories", "Components", "Networking", "Monitors", "Printers"]}
+            bannerBg="bg-gradient-to-b from-slate-900 to-indigo-950"
+            bannerTitle="Upgrade Your Workspace"
+            bannerTagline="Up to 30% Off"
+            products={computerProducts}
+          />
+        </div>
 
-          {/* Card 2 */}
-          <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm hover:border-purple-500/50 transition-all group">
-            <div className="h-12 w-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-              <Server className="h-6 w-6" />
-            </div>
-            <h3 className="text-lg font-bold mt-4 mb-2 text-white">NestJS Core API</h3>
-            <p className="text-sm text-slate-400 font-light">
-              Strongly typed modular gateway handling auth, commissions, and seller logic.
-            </p>
-          </div>
+        {/* Live Auctions Grid (Database backing) */}
+        <div className="bg-white border-y border-gray-100">
+          <AuctionGrid />
+        </div>
 
-          {/* Card 3 */}
-          <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm hover:border-purple-500/50 transition-all group">
-            <div className="h-12 w-12 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform">
-              <Database className="h-6 w-6" />
-            </div>
-            <h3 className="text-lg font-bold mt-4 mb-2 text-white">PostgreSQL & Prisma</h3>
-            <p className="text-sm text-slate-400 font-light">
-              ACID transactional ledgers guaranteeing accurate payouts and inventory balance.
-            </p>
-          </div>
+        {/* Shelf 2: Women's Fashion */}
+        <div className="bg-white border-y border-gray-100">
+          <CategorizedShelf 
+            title="Women's Clothing"
+            subcategories={["Dresses", "Shoes", "Handbags", "Accessories", "Outerwear", "Jewelry"]}
+            bannerBg="bg-gradient-to-b from-[#e62e04] to-pink-900"
+            bannerTitle="Elegance Redefined"
+            bannerTagline="Starting at $19"
+            products={fashionProducts}
+          />
+        </div>
 
-          {/* Card 4 */}
-          <div className="p-6 rounded-2xl border border-slate-800 bg-slate-900/50 backdrop-blur-sm hover:border-purple-500/50 transition-all group">
-            <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-              <Search className="h-6 w-6" />
-            </div>
-            <h3 className="text-lg font-bold mt-4 mb-2 text-white">Faceted OpenSearch</h3>
-            <p className="text-sm text-slate-400 font-light">
-              High throughput full-text search with instant autocomplete and attribute filtering.
-            </p>
-          </div>
-        </section>
+        {/* Classified Listings Grid */}
+        <div className="bg-white border-y border-gray-100">
+          <ClassifiedGrid />
+        </div>
 
-        {/* Database Status Panel Preview */}
-        <section className="mt-12 p-8 rounded-3xl border border-slate-800 bg-slate-900/20 backdrop-blur-md max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-            <div>
-              <h2 className="text-2xl font-bold flex items-center space-x-2">
-                <Shield className="text-purple-500 h-6 w-6" />
-                <span>System Orchestrator Console</span>
-              </h2>
-              <p className="text-sm text-slate-400">Environment status and network configurations</p>
-            </div>
-            <div className="flex items-center space-x-2 bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1" />
-              Infrastructure Ready
-            </div>
-          </div>
+        {/* Top Vendor Stores */}
+        <div className="bg-white border-t border-gray-100">
+          <TopSellers />
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-              <span className="text-xs text-slate-500 block uppercase font-semibold">Database Driver</span>
-              <span className="text-lg font-mono font-bold mt-1 block">PostgreSQL (Prisma)</span>
-              <span className="text-xs text-slate-400 mt-2 block">Host: active-ecommerce-postgres</span>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-              <span className="text-xs text-slate-500 block uppercase font-semibold">Queue Broker</span>
-              <span className="text-lg font-mono font-bold mt-1 block">Redis (BullMQ)</span>
-              <span className="text-xs text-slate-400 mt-2 block">Host: active-ecommerce-redis</span>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-              <span className="text-xs text-slate-500 block uppercase font-semibold">Object Storage</span>
-              <span className="text-lg font-mono font-bold mt-1 block">MinIO (S3 API)</span>
-              <span className="text-xs text-slate-400 mt-2 block">Host: active-ecommerce-minio</span>
-            </div>
+        {/* Vendor Banner CTA */}
+        <div className="container mx-auto px-4 md:px-6 py-4">
+          <div className="w-full bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 rounded-lg p-10 md:p-12 text-center text-white relative overflow-hidden shadow-sm">
+            <h2 className="text-2xl md:text-3xl font-black mb-3 text-white">Become a Vendor Today!</h2>
+            <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">Join our thriving marketplace. Set up your store in minutes, reach millions of buyers, and boost your sales with our premium tools.</p>
+            <button className="bg-[#e62e04] hover:bg-[#d02500] text-white px-8 py-3 rounded-lg font-bold transition-all hover:scale-105 shadow-md">
+              Register Your Store
+            </button>
           </div>
-        </section>
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-slate-900 mt-24">
-        <div className="container mx-auto px-6 text-center text-sm text-slate-500 font-light">
-          &copy; {new Date().getFullYear()} ActiveCommerce Inc. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

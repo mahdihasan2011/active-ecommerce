@@ -6,7 +6,7 @@ import { ShopsModule } from './shops/shops.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { SearchModule } from './search/search.module';
 import { JobsModule } from './jobs/jobs.module';
-import { BullModule } from '@nestjs/bullmq';
+// BullModule removed for local execution
 import { FinanceModule } from './finance/finance.module';
 import { OrdersModule } from './orders/orders.module';
 
@@ -23,16 +23,6 @@ import { OrdersModule } from './orders/orders.module';
     JobsModule,
     FinanceModule,
     OrdersModule,
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        connection: {
-          host: configService.get<string>('REDIS_HOST') || 'localhost',
-          port: configService.get<number>('REDIS_PORT') || 6379,
-        },
-      }),
-      inject: [ConfigService],
-    }),
   ],
 })
 export class AppModule {}

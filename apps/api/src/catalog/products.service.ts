@@ -1,15 +1,14 @@
 import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Queue } from 'bullmq';
+import { SearchIndexerProcessor } from '../jobs/search-indexer.processor';
 import { Product } from '@repo/types';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly prisma: PrismaService,
-    @InjectQueue('search-indexing') private readonly searchQueue: Queue,
+    private readonly searchIndexer: SearchIndexerProcessor,
   ) {}
 
   async create(ownerId: string, dto: CreateProductDto): Promise<Product> {
@@ -66,11 +65,13 @@ export class ProductsService {
       return createdProduct;
     });
 
-    // 4. Push to indexer queue
+    // 4. Run indexer synchronously
     try {
-      await this.searchQueue.add('index-product', { productId: product.id });
+      this.searchIndexer.process('index-product', { productId: product.id }).catch(err => {
+        console.error(`Failed to dispatch search index job for product ${product.id}:`, err);
+      });
     } catch (err) {
-      console.error(`Failed to dispatch search index job for product ${product.id}:`, err);
+      console.error(`Error starting index job for product ${product.id}:`, err);
     }
 
     return product as any;
@@ -124,9 +125,11 @@ export class ProductsService {
     });
 
     try {
-      await this.searchQueue.add('delete-product', { productId: id });
+      this.searchIndexer.process('delete-product', { productId: id }).catch(err => {
+        console.error(`Failed to dispatch delete search index job for product ${id}:`, err);
+      });
     } catch (err) {
-      console.error(`Failed to dispatch delete search index job for product ${id}:`, err);
+      console.error(`Error starting delete index job for product ${id}:`, err);
     }
   }
 }
