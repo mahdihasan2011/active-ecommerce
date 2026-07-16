@@ -4,29 +4,22 @@ This document catalogs every functional capability required for the Bumppa Marke
 
 ---
 
-## 1. 🌐 Customer Storefront (`web`)
+## 1. 🌐 Customer Storefront (External Frontend Project)
 
-The customer storefront is designed for fast, high-converting discovery and responsive interactions.
+> [!NOTE]
+> The Customer Storefront application is developed in a separate repository. However, all of its underlying business logic, database schemas, and REST APIs are designed, implemented, and handled inside the backend services of this project (`apps/api`).
 
-### Authentication & Profile Control
+### Customer-Facing APIs & Logic Handled by Backend
 - **Multimodal Auth**: Password-based login, Social Auth (Google, Apple, Facebook integration), and passwordless OTP verification via phone numbers.
 - **Customer Control Panel**: Editable profile details, saved delivery addresses ledger, and device logins monitor.
 - **Account Security**: Two-Factor Authentication (2FA) toggles, and security logs showing recent IP/login changes.
 - **Deposits Wallet**: Internal credit wallet mapping deposits, purchase debits, refund credits, and detailed audit lists.
-
-### Search & Product Discovery
 - **OpenSearch Live Search**: Instant query search input with auto-complete recommendations.
 - **Faceted Selection Filters**: Search result modifiers including price sliders, brand selectors, ratings (1–5 stars), stock status, and custom specifications.
 - **Wishlist & Watches**: Save products with automated email/push notifications on price drops or restock alerts.
 - **Comparison Engine**: Grid layout evaluating attributes, prices, sizes, and weights side-by-side.
 - **Followed Sellers**: Social feed showing products from followed shops.
-
-### Cart & Multi-Vendor Checkout
-- **Unified Slide-Over Cart**: Persistent cart showing active items.
-- **Split Checkout Processing**: Grouping items automatically by seller and processing checkout operations for each group separately (ensuring isolated payments/commissions).
-- **Promotion & Discount Engine**: Input validators for coupon codes, flash sale discounts, and club points.
-
-### Customer Engagement
+- **Unified Cart & Checkout**: API support for persistent cart storage, coupon validation, flash sales, and split checkout operations (grouping by vendor, processing commissions/payments).
 - **Auctions Explorer**: Live bid logs, bid count indicators, minimum bid increment validations, and active timers.
 - **Buyer Reviews**: Verified purchase reviews with ratings, text details, and image/video uploads.
 - **Direct Messaging (DM)**: Chat panel allowing customer-to-vendor dialogs directly.

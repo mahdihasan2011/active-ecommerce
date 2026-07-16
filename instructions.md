@@ -7,15 +7,15 @@ This instruction guide outlines the workflows and patterns to be followed throug
 ## 1. Architectural Patterns
 
 ### Shared Contracts
-All API requests, response shapes, database schema interfaces, and domain enums MUST be defined in the shared `@repo/types` package. Do not duplicate these types in `apps/api` or `apps/web`.
+All API requests, response shapes, database schema interfaces, and domain enums MUST be defined in the shared `@repo/types` package. Do not duplicate these types in `apps/api` or any frontend dashboard application.
 
 ### API Framework (NestJS)
 - Keep controllers thin and route business logic into services.
 - Always use `ValidationPipe` for incoming payload validation (using `class-validator`).
 - Secure routes utilizing Passport JWT strategies and custom RBAC guards.
 
-### Frontend Framework (Next.js 15)
-- Utilize App Router for layouts, loading states, and page structures.
+### Frontend Dashboards (Next.js 15)
+- Utilize App Router for layouts, loading states, and page structures in dashboard applications (`apps/admin`, `apps/vendor`, `apps/delivery`).
 - Group components under semantic folders (e.g. `src/components/ui`, `src/components/auth`).
 - Use Tailwind CSS variables for uniform color palettes and styling rules.
 

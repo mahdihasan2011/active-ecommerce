@@ -22,11 +22,13 @@ A modern, feature-rich e-commerce platform built with Next.js, TypeScript, and N
 ```
 active-ecommerce/
 ├── apps/
-│   ├── web/         # Next.js frontend
-│   └── api/         # NestJS backend
+│   ├── api/           # NestJS backend API
+│   ├── admin/         # Next.js admin dashboard
+│   ├── vendor/        # Next.js vendor dashboard
+│   └── delivery/      # Next.js delivery/rider dashboard
 ├── packages/
-│   └── ui/          # Shared UI components
-├── packages/tsconfig  # Shared TypeScript configurations
+│   ├── types/         # Shared TypeScript typings (interfaces, enums)
+│   └── tsconfig/      # Shared TypeScript configurations
 ├── tsconfig.base.json
 └── package.json
 ```
@@ -77,15 +79,17 @@ Make sure your PostgreSQL database is running.
    pnpm run prisma:generate
    ```
 
-## Frontend Setup
+## Dashboards Setup
 
 1. **Configure environment variables**
-   Navigate to the Web directory:
+   Each dashboard app (`admin`, `vendor`, `delivery`) uses a Next.js frontend that communicates with the API backend. Create `.env` files for each:
    ```bash
-   cd apps/web
-   cp .env.example .env
+   # From root directory:
+   cp apps/admin/.env.example apps/admin/.env
+   cp apps/vendor/.env.example apps/vendor/.env
+   cp apps/delivery/.env.example apps/delivery/.env
    ```
-   Fill in your API URL in `apps/web/.env`:
+   Fill in the backend API URL in each `.env`:
    ```env
    NEXT_PUBLIC_API_URL="http://localhost:3001/api"
    ```
@@ -94,20 +98,23 @@ Make sure your PostgreSQL database is running.
 
 ### Running the Stack
 
-Because this project is a monorepo powered by Turborepo, you can start both the frontend and backend simultaneously directly from the root directory:
+Because this project is a monorepo powered by Turborepo, you can start the backend and all operational dashboards simultaneously directly from the root directory:
 
 ```bash
 pnpm run dev
 ```
 
-The frontend will be available at `http://localhost:3000`
-The API will be available at `http://localhost:3001`
+The apps will be available at:
+- **API Backend**: `http://localhost:3001`
+- **Admin Dashboard**: `http://localhost:3000` (or the next available port)
+- **Vendor Dashboard**: Next available port
+- **Delivery Portal**: Next available port
 
 ### Root Available Scripts
 
 Run these from the root directory:
 
-- `pnpm run dev`: Start both frontend and backend development servers simultaneously via Turbo
+- `pnpm run dev`: Start backend API and all dashboard development servers simultaneously via Turbo
 - `pnpm run build`: Build the entire workspace (all apps and packages)
 - `pnpm run lint`: Run ESLint across the workspace
 - `pnpm run migrate`: Run Prisma database migrations for the API backend

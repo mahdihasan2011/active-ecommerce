@@ -7,7 +7,9 @@ These instructions govern all agent actions in the `active-ecommerce` workspace.
 ## 1. Monorepo Project Structure & Guidelines
 - **Workspace Layout**:
   - `apps/api`: NestJS backend.
-  - `apps/web`: Next.js 15 App Router frontend.
+  - `apps/admin`: Next.js 15 App Router admin dashboard.
+  - `apps/vendor`: Next.js 15 App Router vendor dashboard.
+  - `apps/delivery`: Next.js 15 App Router delivery portal.
   - `packages/types`: Shared TypeScript typings (interfaces, enums).
 - **TypeScript**: Always use strict typing. Avoid using `any` or disabling lint checks. Keep all shared interfaces in `@repo/types` and import them in the respective packages.
 - **Dependency Management**: Use `pnpm` workspace commands for all packages (e.g. `pnpm --filter api <cmd>`).
